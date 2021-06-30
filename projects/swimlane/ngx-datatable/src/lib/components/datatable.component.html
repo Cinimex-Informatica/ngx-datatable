@@ -1,4 +1,21 @@
 <div role="table" visibilityObserver (visible)="recalculate()">
+  <datatable-footer
+    *ngIf="footerHeight"
+    [rowCount]="rowCount"
+    [pageSize]="pageSize"
+    [offset]="offset"
+    [footerHeight]="footerHeight"
+    [footerTemplate]="footer"
+    [totalMessage]="messages.totalMessage"
+    [pagerLeftArrowIcon]="cssClasses.pagerLeftArrow"
+    [pagerRightArrowIcon]="cssClasses.pagerRightArrow"
+    [pagerPreviousIcon]="cssClasses.pagerPrevious"
+    [selectedCount]="selected.length"
+    [selectedMessage]="!!selectionType && messages.selectedMessage"
+    [pagerNextIcon]="cssClasses.pagerNext"
+    (page)="onFooterPage($event)"
+  >
+  </datatable-footer>
   <datatable-header
     role="rowgroup"
     *ngIf="headerHeight"

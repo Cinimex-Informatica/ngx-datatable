@@ -33,6 +33,15 @@ export class DataTableSelectionComponent {
   selectRow(event: KeyboardEvent | MouseEvent, index: number, row: any): void {
     if (!this.selectEnabled) return;
 
+    if (event instanceof MouseEvent && event.type === 'click' && event.composedPath()) {
+      const path = event.composedPath();
+      for (let i = 0; !path[i]['localName'].startsWith('datatable-') && i < path.length; i++) {
+        if (path[i]['localName'] === 'button' || path[i]['localName'] === 'a') {
+          return;
+        }
+      }
+    }
+
     const chkbox = this.selectionType === SelectionType.checkbox;
     const multi = this.selectionType === SelectionType.multi;
     const multiClick = this.selectionType === SelectionType.multiClick;
