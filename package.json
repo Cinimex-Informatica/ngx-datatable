@@ -26,7 +26,8 @@
     "prepack": "npm run package",
     "pack": "npm pack ./dist/swimlane/ngx-datatable/",
     "publish": "run-s publish:lib deploy-docs",
-    "prepublishOnly": "echo \"This is the workspace -- you probably meant run 'npm run publish'.\" && exit 1"
+    "prepublishOnly": "echo \"This is the workspace -- you probably meant run 'npm run publish'.\" && exit 1",
+    "prepare": "npm run build"
   },
   "private": true,
   "dependencies": {
