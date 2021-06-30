@@ -30,7 +30,7 @@ export type TreeStatus = 'collapsed' | 'expanded' | 'loading' | 'disabled';
         *ngIf="column.checkboxable && (!displayCheck || displayCheck(row, column, value))"
         class="datatable-checkbox"
       >
-        <input type="checkbox" [checked]="isSelected" (click)="onCheckboxChange($event)" />
+        <input type="checkbox" [checked]="isSelected" (click)="onCheckboxChange($event)" [disabled]="selectCheck && !selectCheck(row)" />
       </label>
       <ng-container *ngIf="column.isTreeColumn">
         <button
@@ -66,6 +66,7 @@ export type TreeStatus = 'collapsed' | 'expanded' | 'loading' | 'disabled';
 })
 export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
   @Input() displayCheck: (row: any, column?: TableColumn, value?: any) => boolean;
+  @Input() selectCheck: any;
 
   @Input() set group(group: any) {
     this._group = group;

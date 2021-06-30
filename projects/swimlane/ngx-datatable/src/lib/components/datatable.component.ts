@@ -90,9 +90,13 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
     if (this._rows && this._groupRowsBy) {
       // If a column has been specified in _groupRowsBy created a new array with the data grouped by that row
       this.groupedRows = this.groupArrayBy(this._rows, this._groupRowsBy);
+      this.groupedRows.forEach(group => {
+        group.value = groupRowsByParents(group.value, optionalGetterForProp(this.treeFromRelation), optionalGetterForProp(this.treeToRelation));
+      });
     }
 
     this.cd.markForCheck();
+    this.cd.detectChanges();
   }
 
   /**
@@ -322,13 +326,13 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
   @Input() messages: any = {
     // Message to show when array is presented
     // but contains no values
-    emptyMessage: 'No data to display',
+    emptyMessage: 'Нет данных для отображения',
 
     // Footer total message
-    totalMessage: 'total',
+    totalMessage: 'Всего',
 
     // Footer selected message
-    selectedMessage: 'selected'
+    selectedMessage: 'Выбрано'
   };
 
   /**
@@ -1091,23 +1095,30 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
       // before we splice, chk if we currently have all selected
       const first = this.bodyComponent.indexes.first;
       const last = this.bodyComponent.indexes.last;
-      const allSelected = this.selected.length === last - first;
+
+      const selectableRows =
+        this.selectCheck && typeof this.selectCheck === 'function'
+          ? this._internalRows.slice(first, last).filter(this.selectCheck.bind(this))
+          : this._internalRows.slice(first, last);
+
+      const allSelected = this.selected.length === selectableRows.length;
 
       // remove all existing either way
       this.selected = [];
 
       // do the opposite here
       if (!allSelected) {
-        this.selected.push(...this._internalRows.slice(first, last));
+        this.selected.push(...selectableRows);
       }
     } else {
+      const selectableRows = this.selectCheck && typeof this.selectCheck === 'function' ? this.rows.filter(this.selectCheck.bind(this)) : this.rows;
       // before we splice, chk if we currently have all selected
-      const allSelected = this.selected.length === this.rows.length;
+      const allSelected = this.selected.length === selectableRows.length;
       // remove all existing either way
       this.selected = [];
       // do the opposite here
       if (!allSelected) {
-        this.selected.push(...this.rows);
+        this.selected.push(...selectableRows);
       }
     }
 

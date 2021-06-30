@@ -75,6 +75,7 @@ import { translateXY } from '../../utils/translate';
             [rowIndex]="getRowIndex(group)"
             [expanded]="getRowExpanded(group)"
             [rowClass]="rowClass"
+            [selectCheck]="selectCheck"
             [displayCheck]="displayCheck"
             [treeStatus]="group && group.treeStatus"
             (treeAction)="onTreeAction(group)"
@@ -96,6 +97,8 @@ import { translateXY } from '../../utils/translate';
               [rowIndex]="getRowIndex(row)"
               [expanded]="getRowExpanded(row)"
               [rowClass]="rowClass"
+              [treeStatus]="row.treeStatus"
+              (treeAction)="onTreeAction(row)"
               (activate)="selector.onActivate($event, i)"
             >
             </datatable-body-row>
@@ -133,7 +136,12 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
   @Input() selected: any[] = [];
   @Input() rowIdentity: any;
   @Input() rowDetail: any;
-  @Input() groupHeader: any;
+  @Input('groupHeader') set setGroupHeader(groupHeader) {
+    this.groupHeader = groupHeader;
+    if (this.groupHeader && !this.listener) {
+      this.setGroupHeaderListener();
+    }
+  }
   @Input() selectCheck: any;
   @Input() displayCheck: any;
   @Input() trackByProp: string;
@@ -258,6 +266,7 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
   listener: any;
   rowIndexes: any = new WeakMap<any, string>();
   rowExpansions: any[] = [];
+  isAllGroupCollapsed: boolean;
 
   _rows: any[];
   _bodyHeight: any;
@@ -265,6 +274,7 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
   _rowCount: number;
   _offset: number;
   _pageSize: number;
+  groupHeader: any;
 
   /**
    * Creates an instance of DataTableBodyComponent.
@@ -303,28 +313,33 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
     }
 
     if (this.groupHeader) {
-      this.listener = this.groupHeader.toggle.subscribe(({ type, value }: { type: string; value: any }) => {
-        if (type === 'group') {
-          this.toggleRowExpansion(value);
-        }
-        if (type === 'all') {
-          this.toggleAllRows(value);
-        }
-
-        // Refresh rows after toggle
-        // Fixes #883
-        this.updateIndexes();
-        this.updateRows();
-        this.cd.markForCheck();
-      });
+      this.setGroupHeaderListener();
     }
   }
+
+  setGroupHeaderListener() {
+    this.listener = this.groupHeader.toggle.subscribe(({ type, value }: { type: string; value: any }) => {
+      if (type === 'group') {
+        this.toggleRowExpansion(value);
+      }
+      if (type === 'all') {
+        this.toggleAllRows(value);
+      }
+
+      // Refresh rows after toggle
+      // Fixes #883
+      this.updateIndexes();
+      this.updateRows();
+      this.cd.markForCheck();
+    });
+  }
+
 
   /**
    * Called once, before the instance is destroyed.
    */
   ngOnDestroy(): void {
-    if (this.rowDetail || this.groupHeader) {
+    if ((this.rowDetail || this.groupHeader) && this.listener) {
       this.listener.unsubscribe();
     }
   }
@@ -691,6 +706,8 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
       this.rowExpansions.push(row);
     }
 
+    this.isAllGroupCollapsed = this.rowExpansions.length === 0;
+
     this.detailToggle.emit({
       rows: [row],
       currentIndex: viewPortFirstRowIndex
@@ -769,7 +786,7 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
    * Returns if the row was expanded and set default row expansion when row expansion is empty
    */
   getRowExpanded(row: any): boolean {
-    if (this.rowExpansions.length === 0 && this.groupExpansionDefault) {
+    if (this.rowExpansions.length === 0 && this.groupExpansionDefault && !this.isAllGroupCollapsed) {
       for (const group of this.groupedRows) {
         this.rowExpansions.push(group);
       }

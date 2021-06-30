@@ -38,7 +38,7 @@
    */
   &.scroll-horz {
     .datatable-body {
-      overflow-x: auto;
+      overflow-x: visible;
       -webkit-overflow-scrolling: touch;
     }
   }
@@ -106,7 +106,7 @@
 
   .datatable-body-cell,
   .datatable-header-cell {
-    overflow-x: hidden;
+    overflow-x: visible;
     vertical-align: top;
     display: inline-block;
     line-height: 1.625;

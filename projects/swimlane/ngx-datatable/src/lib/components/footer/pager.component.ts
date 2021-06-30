@@ -30,7 +30,7 @@ import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from 
           <i class="{{ pagerRightArrowIcon }}"></i>
         </a>
       </li>
-      <li [class.disabled]="!canNext()">
+      <li *ngIf="showLastPage" [class.disabled]="!canNext()">
         <a role="button" aria-label="go to last page" href="javascript:void(0)" (click)="selectPage(totalPages)">
           <i class="{{ pagerNextIcon }}"></i>
         </a>
@@ -47,6 +47,7 @@ export class DataTablePagerComponent {
   @Input() pagerRightArrowIcon: string;
   @Input() pagerPreviousIcon: string;
   @Input() pagerNextIcon: string;
+  @Input() showLastPage = true;
 
   @Input()
   set size(val: number) {

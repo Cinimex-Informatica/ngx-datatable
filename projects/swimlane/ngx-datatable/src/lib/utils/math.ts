@@ -93,7 +93,8 @@ export function forceFillColumnWidths(
   expectedWidth: number,
   startIdx: number,
   allowBleed: boolean,
-  defaultColWidth: number = 300
+  defaultColWidth: number = 300,
+  level: number = 0
 ) {
   const columnsToResize = allColumns.slice(startIdx + 1, allColumns.length).filter(c => {
     return c.canAutoResize !== false;
@@ -141,6 +142,11 @@ export function forceFillColumnWidths(
     remainingWidth = expectedWidth - contentWidth;
     removeProcessedColumns(columnsToResize, columnsProcessed);
   } while (remainingWidth > remainingWidthLimit && columnsToResize.length !== 0);
+
+  if (Math.abs(remainingWidth) > 1 && level < 5) {
+    forceFillColumnWidths(allColumns, expectedWidth, startIdx, allowBleed, defaultColWidth, level + 1);
+  }
+
 }
 
 /**
