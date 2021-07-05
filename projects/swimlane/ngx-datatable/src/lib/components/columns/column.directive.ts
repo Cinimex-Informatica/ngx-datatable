@@ -31,34 +31,46 @@ export class DataTableColumnDirective implements OnChanges {
   @Input() summaryTemplate: TemplateRef<any>;
 
   @Input('cellTemplate')
-  _cellTemplateInput: TemplateRef<any>;
+  set inputCellTemplate(inputCellTemplate) {
+    this.cellTemplate = inputCellTemplate;
+  }
 
   @ContentChild(DataTableColumnCellDirective, { read: TemplateRef, static: true })
-  _cellTemplateQuery: TemplateRef<any>;
-
-  get cellTemplate(): TemplateRef<any> {
-    return this._cellTemplateInput || this._cellTemplateQuery;
+  set queryCellTemplate(queryCellTemplate) {
+    if (!this.cellTemplate) {
+      this.cellTemplate = queryCellTemplate;
+    }
   }
+
+  cellTemplate: TemplateRef<any>;
 
   @Input('headerTemplate')
-  _headerTemplateInput: TemplateRef<any>;
+  set inputHeaderTemplate(inputHeaderTemplate) {
+    this.headerTemplate = inputHeaderTemplate;
+  }
 
   @ContentChild(DataTableColumnHeaderDirective, { read: TemplateRef, static: true })
-  _headerTemplateQuery: TemplateRef<any>;
-
-  get headerTemplate(): TemplateRef<any> {
-    return this._headerTemplateInput || this._headerTemplateQuery;
+  set queryHeaderTemplate(queryHeaderTemplate) {
+    if (!this.headerTemplate) {
+      this.headerTemplate = queryHeaderTemplate;
+    }
   }
+
+  headerTemplate: TemplateRef<any>;
 
   @Input('treeToggleTemplate')
-  _treeToggleTemplateInput: TemplateRef<any>;
+  set inputTreeToggleTemplate(inputTreeToggleTemplate) {
+    this.treeToggleTemplate = inputTreeToggleTemplate;
+  }
 
   @ContentChild(DataTableColumnCellTreeToggle, { read: TemplateRef, static: true })
-  _treeToggleTemplateQuery: TemplateRef<any>;
-
-  get treeToggleTemplate(): TemplateRef<any> {
-    return this._treeToggleTemplateInput || this._treeToggleTemplateQuery;
+  set queryTreeToggleTemplate(queryTreeToggleTemplate) {
+    if (!this.treeToggleTemplate) {
+      this.treeToggleTemplate = queryTreeToggleTemplate;
+    }
   }
+
+  treeToggleTemplate: TemplateRef<any>;
 
   private isFirstChange = true;
 
