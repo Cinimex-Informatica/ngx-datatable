@@ -62,6 +62,8 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
    */
   @Input() targetMarkerTemplate: any;
 
+  @Input() groupRows = false;
+
   /**
    * Rows that are displayed in the table.
    */
@@ -91,12 +93,18 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
       // If a column has been specified in _groupRowsBy created a new array with the data grouped by that row
       this.groupedRows = this.groupArrayBy(this._rows, this._groupRowsBy);
       this.groupedRows.forEach(group => {
-        group.value = groupRowsByParents(group.value, optionalGetterForProp(this.treeFromRelation), optionalGetterForProp(this.treeToRelation));
+        group.value = groupRowsByParents(
+          group.value,
+          optionalGetterForProp(this.treeFromRelation),
+          optionalGetterForProp(this.treeToRelation)
+        );
       });
     }
 
     this.cd.markForCheck();
-    this.cd.detectChanges();
+    if (this.groupRows) {
+      this.cd.detectChanges();
+    }
   }
 
   /**
@@ -1111,7 +1119,10 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
         this.selected.push(...selectableRows);
       }
     } else {
-      const selectableRows = this.selectCheck && typeof this.selectCheck === 'function' ? this.rows.filter(this.selectCheck.bind(this)) : this.rows;
+      const selectableRows =
+        this.selectCheck && typeof this.selectCheck === 'function'
+          ? this.rows.filter(this.selectCheck.bind(this))
+          : this.rows;
       // before we splice, chk if we currently have all selected
       const allSelected = this.selected.length === selectableRows.length;
       // remove all existing either way
