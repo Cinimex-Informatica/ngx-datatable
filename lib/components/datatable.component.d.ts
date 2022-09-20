@@ -25,6 +25,7 @@ export declare class DatatableComponent implements OnInit, DoCheck, AfterViewIni
      * Template for the target marker of drag target columns.
      */
     targetMarkerTemplate: any;
+    groupRows: boolean;
     /**
      * Rows that are displayed in the table.
      */
